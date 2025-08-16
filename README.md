@@ -1,92 +1,95 @@
-1. Instalar a IDE Arduino
+# Varal Inteligente com ESP32
 
-Baixe e instale a IDE Arduino.
+![ESP32](https://img.shields.io/badge/ESP32-Development_Platform-blue) ![Arduino](https://img.shields.io/badge/Arduino_IDE-Compatible-green) ![MQTT](https://img.shields.io/badge/Protocol-MQTT-orange) ![Telegram](https://img.shields.io/badge/Integration-Telegram_Bot-blue)
 
-Após a instalação, abra a IDE Arduino.
+Um sistema automatizado para controle de varal baseado em umidade e comandos remotos via Telegram.
 
-2. Instalar Suporte ao ESP32 na IDE Arduino
+## 📋 Pré-requisitos
 
-Vá em Arquivo > Preferências na IDE.
+- Placa ESP32
+- IDE Arduino instalada
+- Conexão Wi-Fi estável
+- Conta no Telegram (para controle via bot)
 
-Na seção URLs adicionais para gerenciadores de placas, adicione o seguinte link:
+## 🛠 Instalação
 
-https://dl.espressif.com/dl/package_esp32_index.json
+### 1. Instalar a IDE Arduino
+Baixe e instale a IDE Arduino do [site oficial](https://www.arduino.cc/en/software).
 
+### 2. Configurar Suporte ao ESP32
+1. Abra a IDE Arduino
+2. Vá em `Arquivo > Preferências`
+3. Adicione esta URL em "URLs adicionais para gerenciadores de placas": https://dl.espressif.com/dl/package_esp32_index.json
+4. Vá para `Ferramentas > Placa > Gerenciador de Placas`
+5. Busque por `ESP32` e instale
 
-Vá para Ferramentas > Placa > Gerenciador de Placas, busque por ESP32 e clique em Instalar.
+### 3. Instalar Bibliotecas Necessárias
+No Gerenciador de Bibliotecas (`Sketch > Incluir Biblioteca > Gerenciar Bibliotecas`), instale:
+- `PubSubClient` (para MQTT)
+- `ArduinoJson` (para manipulação de JSON)
+- `WiFi` (já instalada com o ESP32)
 
-3. Instalar as Bibliotecas Necessárias
+## ⚙ Configuração
 
-Na IDE Arduino, vá para Sketch > Incluir Biblioteca > Gerenciar Bibliotecas....
+### Conexões do Hardware
+| Componente    | Pino ESP32 |
+|--------------|-----------|
+| Motor IN1    | GPIO 4    |
+| Motor IN2    | GPIO 17   |
+| Motor IN3    | GPIO 18   |
+| Motor IN4    | GPIO 21   |
+| Sensor Umidade | GPIO 5   |
 
-Busque e instale as seguintes bibliotecas:
+### Configuração do Software
+No arquivo `varal_inteligente.ino`, altere as seguintes variáveis:
 
-WiFi (instalada por padrão com o ESP32)
-
-PubSubClient (para MQTT)
-
-ArduinoJson (para manipulação de JSON)
-
-4. Configuração do Código
-
-Conecte o ESP32 ao computador via cabo USB.
-
-Abra o código varal_inteligente.ino na IDE Arduino.
-
-Configuração do Wi-Fi e MQTT:
-
-No código, localize as seguintes variáveis e substitua pelos seus dados:
-
+// Configurações de Rede
 const char* WIFI_SSID = "Seu_SSID";
 const char* WIFI_PASS = "Sua_Senha";
+
+// Configurações MQTT
 const char* MQTT_SERVER = "broker.hivemq.com";
 const int MQTT_PORT = 1883;
 const char* MQTT_TOPIC_CONTROL = "varal/controle";
 const char* MQTT_TOPIC_STATUS = "varal/estado";
 
+## 📤 Upload do Código
 
-Altere o SSID e senha da sua rede Wi-Fi.
+1. Conecte o ESP32 via USB
+2. Selecione:
+   - **Placa:** `ESP32 Dev Module`
+   - **Porta COM** correspondente
+3. Clique no botão de Upload (→)
 
-O broker MQTT está configurado para usar o broker público HiveMQ, mas você pode mudar para um broker privado se preferir.
+## 🤖 Configuração do Telegram
 
-5. Configuração do Motor e Sensor
+1. Crie um bot conversando com [@BotFather](https://t.me/BotFather)
+2. Guarde o token fornecido
+3. Insira o token no código (se necessário)
 
-Pinos do Motor:
+## 🚀 Funcionamento
 
-IN1 (GPIO 4), IN2 (GPIO 17), IN3 (GPIO 18) e IN4 (GPIO 21) controlam o motor de passo.
+**Funcionalidades:**
+- ✅ Controle automático baseado na umidade
+- 📲 Comandos manuais via Telegram:
 
-Certifique-se de que o motor e o driver estão conectados corretamente aos pinos do ESP32.
+| Comando    | Ação                          |
+|------------|-------------------------------|
+| `/recolher`| Recolhe o varal               |
+| `/liberar` | Libera o varal                |
+| `/status`  | Verifica o estado atual       |
 
-Sensor de Umidade:
+## 📊 Monitoramento
 
-O sensor de umidade está conectado ao pino GPIO 5. Se você usar um sensor diferente, ajuste o pino conforme necessário.
+**Monitor Serial** (`Ferramentas > Monitor Serial`):
+- 📝 Ver logs do sistema
+- 🐞 Depurar problemas
+- ⏱ Monitorar status em tempo real
 
-6. Carregar o Código no ESP32
+## 🔧 Troubleshooting
 
-Selecione a placa ESP32 em Ferramentas > Placa > ESP32 Dev Module.
-
-Selecione a porta COM do ESP32 em Ferramentas > Porta.
-
-Clique em Carregar (ícone de seta) para enviar o código para o ESP32.
-
-7. Configuração do Bot no Telegram
-
-Crie um bot no Telegram conversando com o BotFather no Telegram.
-
-Guarde o token do bot fornecido pelo BotFather.
-
-No seu código, insira o token do bot em uma variável, caso precise de alguma configuração adicional para comunicação.
-
-8. Executando o Sistema
-
-Após carregar o código no ESP32, o sistema se conectará à rede Wi-Fi e ao broker MQTT.
-
-O varal será controlado automaticamente com base na umidade ou manualmente via comandos do Telegram.
-
-Comandos como "recolher" ou "liberar" podem ser enviados através do bot no Telegram para controlar o varal.
-
-9. Testes e Monitoramento
-
-Utilize o monitor serial da IDE Arduino para ver os logs do ESP32 e depurar qualquer problema.
-
-O sistema irá publicar o status em tempo real no tópico MQTT configurado, e o bot no Telegram exibirá o status para o usuário.
+| Problema                     | Solução                          |
+|------------------------------|-----------------------------------|
+| Falha na conexão Wi-Fi       | Verifique SSID e senha           |
+| Problemas com MQTT           | Teste com broker público alternativo |
+| Motor não responde           | Confira conexões dos pinos       |
